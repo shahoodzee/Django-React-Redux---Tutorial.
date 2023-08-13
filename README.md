@@ -602,36 +602,41 @@ Your App.js file should look like this.
         })
         .catch((err) => console.log(err));
     };
+        
+    ///DELETE LEAD
+    //export const deleteLead = (id) => (dispatch, getState) => {
     
-    // DELETE LEAD
-    // export const deleteLead = (id) => (dispatch, getState) => {
-    //   axios
-    //     .delete(`/api/leads/${id}/`, tokenConfig(getState))
-    //     .then((res) => {
-    //       dispatch(createMessage({ deleteLead: 'Lead Deleted' }));
-    //       dispatch({
-    //         type: DELETE_LEAD,
-    //         payload: id,
-    //       });
-    //     })
-    //     .catch((err) => console.log(err));
-    // };
+    export const deleteLead = (id) => (dispatch, getState) => {
+      axios
+      .delete(`/api/leads/${id}/`)    //.delete(`/api/leads/${id}/`, tokenConfig(getState))
+      .then((res) => {
+          //dispatch(createMessage({ deleteLead: 'Lead Deleted' }));
+          dispatch({
+            type: DELETE_LEAD,
+            payload: id,
+          });
+        })
+        .catch((err) => console.log(err));
+    };
     
-    // // ADD LEAD
-    // export const addLead = (lead) => (dispatch, getState) => {
-    //   axios
-    //     .post('/api/leads/', lead, tokenConfig(getState))
-    //     .then((res) => {
-    //       dispatch(createMessage({ addLead: 'Lead Added' }));
-    //       dispatch({
-    //         type: ADD_LEAD,
-    //         payload: res.data,
-    //       });
-    //     })
-    //     .catch((err) => dispatch(returnErrors(err.response.data, err.response.status)));
-    // };
+    // ADD LEAD
+    //export const addLead = (lead) => (dispatch, getState) => {
     
-  Commented the rest code just  look at GET_LEADS fucntion it will gget the leads list from api url -> http://localhost:8000/api/leads although we dont have to add this cuz 
+    export const addLead = (lead) => (dispatch) => {
+      axios
+      .post('/api/leads/', lead)    //.post('/api/leads/', lead, tokenConfig(getState))
+      .then((res) => {
+        //dispatch(createMessage({ addLead: 'Lead Added' }));
+        dispatch({
+            type: ADD_LEAD,
+            payload: res.data,
+          });
+        })
+        .catch((err) => console.log(err));    
+        // .catch((err) => dispatch(returnErrors(err.response.data, err.response.status)));
+    };
+    
+  Commented the rest code just look at GET_LEADS fucntion it will get the leads list from api url -> http://localhost:8000/api/leads although we dont have to add this cuz 
   we on the same server.
 
 6. Now where do wanna call this action ? In the component which is rendering our leads list.
@@ -746,7 +751,7 @@ Your App.js file should look like this.
             </table>
           </Fragment>
     This above already contains the delete button to delete certain data from api. Now You just need to implement Delete_Leads function to make it work which has 
-    already been provided with the get_leads (in commented form).       
+    already been provided with the get_leads (in commented form). However there is still some funcitonalities commented within them that means they are expected       to be used later on.       
 &. Delete_Leads and Add_Leads
 
        Source is already given in commented form (src->componets->actions->leads.js)
