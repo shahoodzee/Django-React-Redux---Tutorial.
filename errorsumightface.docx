@@ -1,0 +1,11 @@
+1. If react-dom.development.js:86 Warning: You are importing createRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".
+Get this error its rasy to get rid of it just google it.
+But main thing is that Please clear the cache of your  browser.Sometimes, old JavaScript code might be cached, causing unexpected behavior.
+ 
+2. 'createStore' is deprecated.ts(6385)
+index.d.ts(375, 4): The declaration was marked as deprecated here.
+(alias) function createStore<S, A extends Action<any>, Ext, StateExt>(reducer: Reducer<S, A>, enhancer?: StoreEnhancer<Ext, StateExt>): Store<S & StateExt, A> & Ext (+1 overload)
+import createStore
+@deprecated
+We recommend using the configureStore method of the @reduxjs/toolkit package, which replaces createStore.
+https://stackoverflow.com/questions/71944111/redux-createstore-is-deprecated-cannot-get-state-from-getstate-in-redux-ac
