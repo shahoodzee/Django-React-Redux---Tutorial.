@@ -49,7 +49,7 @@ Then we create a model class called Leads where we make the model what will be t
     email = models.EmailField(max_length=100, unique=True)
     message = models.CharField(max_length=500, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    image = models.ImageField(upload_to='leads_images/')  # Specify the upload directory
+    image = models.ImageField(upload_to='leads_images/', blank=True, null =True)    #learn about media root.
     
     owner = models.ForeignKey(
         User, related_name="leads", on_delete=models.CASCADE, null=True)
@@ -602,36 +602,41 @@ Your App.js file should look like this.
         })
         .catch((err) => console.log(err));
     };
+        
+    ///DELETE LEAD
+    //export const deleteLead = (id) => (dispatch, getState) => {
     
-    // DELETE LEAD
-    // export const deleteLead = (id) => (dispatch, getState) => {
-    //   axios
-    //     .delete(`/api/leads/${id}/`, tokenConfig(getState))
-    //     .then((res) => {
-    //       dispatch(createMessage({ deleteLead: 'Lead Deleted' }));
-    //       dispatch({
-    //         type: DELETE_LEAD,
-    //         payload: id,
-    //       });
-    //     })
-    //     .catch((err) => console.log(err));
-    // };
+    export const deleteLead = (id) => (dispatch, getState) => {
+      axios
+      .delete(`/api/leads/${id}/`)    //.delete(`/api/leads/${id}/`, tokenConfig(getState))
+      .then((res) => {
+          //dispatch(createMessage({ deleteLead: 'Lead Deleted' }));
+          dispatch({
+            type: DELETE_LEAD,
+            payload: id,
+          });
+        })
+        .catch((err) => console.log(err));
+    };
     
-    // // ADD LEAD
-    // export const addLead = (lead) => (dispatch, getState) => {
-    //   axios
-    //     .post('/api/leads/', lead, tokenConfig(getState))
-    //     .then((res) => {
-    //       dispatch(createMessage({ addLead: 'Lead Added' }));
-    //       dispatch({
-    //         type: ADD_LEAD,
-    //         payload: res.data,
-    //       });
-    //     })
-    //     .catch((err) => dispatch(returnErrors(err.response.data, err.response.status)));
-    // };
+    // ADD LEAD
+    //export const addLead = (lead) => (dispatch, getState) => {
     
-  Commented the rest code just  look at GET_LEADS fucntion it will gget the leads list from api url -> http://localhost:8000/api/leads although we dont have to add this cuz 
+    export const addLead = (lead) => (dispatch) => {
+      axios
+      .post('/api/leads/', lead)    //.post('/api/leads/', lead, tokenConfig(getState))
+      .then((res) => {
+        //dispatch(createMessage({ addLead: 'Lead Added' }));
+        dispatch({
+            type: ADD_LEAD,
+            payload: res.data,
+          });
+        })
+        .catch((err) => console.log(err));    
+        // .catch((err) => dispatch(returnErrors(err.response.data, err.response.status)));
+    };
+    
+  Commented the rest code just look at GET_LEADS fucntion it will get the leads list from api url -> http://localhost:8000/api/leads although we dont have to add this cuz 
   we on the same server.
 
 6. Now where do wanna call this action ? In the component which is rendering our leads list.
@@ -746,12 +751,199 @@ Your App.js file should look like this.
             </table>
           </Fragment>
     This above already contains the delete button to delete certain data from api. Now You just need to implement Delete_Leads function to make it work which has 
-    already been provided with the get_leads (in commented form).       
+    already been provided with the get_leads (in commented form). However there is still some funcitonalities commented within them that means they are expected       to be used later on.       
 &. Delete_Leads and Add_Leads
-
        Source is already given in commented form (src->componets->actions->leads.js)
-9. Remaining Cases in the reducers folder.    
-# Authentication in Django
+           
+   
+9. UI form for using the add_lead() functionality.
+    Update this src->componeents->dashbaord.js as:
+
+        import React, { Component ,Fragment } from 'react';
+        import { connect } from 'react-redux';
+        import PropTypes from 'prop-types';
+        import { getLeads , deleteLead } from '../../actions/leads';
+        
+        class Leads extends Component {
+        
+          static propTypes = {
+            leads: PropTypes.array.isRequired,
+            getLeads: PropTypes.func.isRequired,
+            deleteLead: PropTypes.func.isRequired
+          };
+        
+          componentDidMount() {
+            this.props.getLeads();
+          }
+        
+          render() {
+            return (
+              <div>
+              <Fragment>
+                <h2>Leads</h2>
+        
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Message</th>
+                      <th>Gender</th>
+                      <th>Image</th>
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.props.leads.map((lead) => (
+                      <tr key={lead.id}>
+                        <td>{lead.id}</td>
+                        <td>{lead.name}</td>
+                        <td>{lead.email}</td>
+                        <td>{lead.message}</td>
+                        <td>{lead.gender}</td>
+                        <td>
+                          {/* Render the image using the <img> element */}
+                          <img src={lead.image} style={{ width: '50px', height: 'auto' }} alt={`Image for ${lead.name}`} />
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => this.props.deleteLead(lead.id)}
+                            className="btn btn-danger btn-sm"
+                          >
+                            {' '}
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Fragment>
+        
+              </div>
+            );
+          }
+        }
+        
+        const mapStateToProps = (state) => ({
+          leads: state.leads.leads,
+        });
+        
+        export default connect(mapStateToProps, { getLeads, deleteLead })(Leads);
+        
+        // The mapstatetoprops bring us the exisiting data (leads already stored)
+
+   
+11.     
+# Error Handling in React_django.
+If we start submitting the form without an email or re submit a form with already existing email we will not get an error but a bad request. so we need to create an error handler in our reducers. Instead of using toools like bootstrap alert we will use a thrd party app react-alert.
+use cmd.
+
+    npm i react-alert react-alert-template-basic react-transition-group
+    
+##    1. Update the app.js file (src)
+Update the src.js file as:
+
+    import React, { Component, Fragment } from 'react';
+    import { createRoot } from 'react-dom/client';
+    
+    import { Provider } from 'react-redux';
+    import store from '../store';
+    
+    import { Provider as AlertProvider } from 'react-alert';
+    import AlertTemplate from 'react-alert-template-basic';
+    
+    import Header from './layout/Header';
+    import Dashboard from './leads/Dashboard';
+    
+    // Alert Options
+    const alertOptions = {
+        timeout: 3000,        //adding the time duration.
+        position: 'top center',    //where the alert msgg will pop up.
+    };
+    
+    class App extends Component {
+        render() {
+            return (
+                <Provider store = {store}>
+                <AlertProvider template={AlertTemplate} 
+                {...alertOptions}> //adding alert provider
+                <Fragment>
+                    <Header/>
+                    <div className='container'>
+                        <Dashboard />
+                    </div>
+                </Fragment> 
+                </AlertProvider>
+                </Provider>
+            );
+        }
+    }
+    
+    const root = document.getElementById('app');
+    if (root) {
+        const reactRoot = createRoot(root);
+        reactRoot.render(<App />);
+    }
+By adding alert lib in app.js u can use it annywhere in frontend folders. We will make a component for our alerts implementation.
+
+    src->layout->Alerts.js file (focus on the commented code)
+    import React, { Component, Fragment } from 'react';
+    import { withAlert } from 'react-alert';
+    import { connect } from 'react-redux';
+    import PropTypes from 'prop-types';
+    
+    export class Alerts extends Component {
+      // static propTypes = {
+      //   error: PropTypes.object.isRequired,
+      //   message: PropTypes.object.isRequired,
+      // };
+    
+      // componentDidUpdate(prevProps) {
+      //   const { error, alert, message } = this.props;
+      //   if (error !== prevProps.error) {
+      //     if (error.msg.name) alert.error(`Name: ${error.msg.name.join()}`);
+      //     if (error.msg.email) alert.error(`Email: ${error.msg.email.join()}`);
+      //     if (error.msg.message) alert.error(`Message: ${error.msg.message.join()}`);
+      //     if (error.msg.non_field_errors) alert.error(error.msg.non_field_errors.join());
+      //     if (error.msg.username) alert.error(error.msg.username.join());
+      //   }
+    
+      //   if (message !== prevProps.message) {
+      //     if (message.deleteLead) alert.success(message.deleteLead);
+      //     if (message.addLead) alert.success(message.addLead);
+      //     if (message.passwordNotMatch) alert.error(message.passwordNotMatch);
+      //   }
+      // }
+      componentDidMount(){
+        this.props.alert.show('It works')
+      }
+    
+      render() {
+        return <Fragment />;
+      }
+    }
+    
+    const mapStateToProps = (state) => ({
+      error: state.errors,
+      message: state.messages,
+    });
+    
+    export default connect(mapStateToProps)(withAlert()(Alerts));
+
+As soon as a component mounts this alert in the component is 
+Add this component in the other compenents to check wether the alert is shown or not in the main app.js file.
+
+    import Alert from './layout/Alerts';
+    Update the app.js file and add <Alert /> before the container class.
+
+        <Fragment>
+            <Alert/>    
+                <Header/>
+                <div className='container'>
+                    <Dashboard />
+                    
 
 ### pipenv install django-rest-knox
 
