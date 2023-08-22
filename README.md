@@ -49,7 +49,7 @@ Then we create a model class called Leads where we make the model what will be t
     email = models.EmailField(max_length=100, unique=True)
     message = models.CharField(max_length=500, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    image = models.ImageField(upload_to='leads_images/')  # Specify the upload directory
+    image = models.ImageField(upload_to='leads_images/', blank=True, null =True)    #learn about media root.
     
     owner = models.ForeignKey(
         User, related_name="leads", on_delete=models.CASCADE, null=True)
@@ -753,9 +753,89 @@ Your App.js file should look like this.
     This above already contains the delete button to delete certain data from api. Now You just need to implement Delete_Leads function to make it work which has 
     already been provided with the get_leads (in commented form). However there is still some funcitonalities commented within them that means they are expected       to be used later on.       
 &. Delete_Leads and Add_Leads
-
        Source is already given in commented form (src->componets->actions->leads.js)
-9. Remaining Cases in the reducers folder.    
+           
+   
+9. UI form for using the add_lead() functionality.
+    Update this src->componeents->dashbaord.js as:
+
+        import React, { Component ,Fragment } from 'react';
+        import { connect } from 'react-redux';
+        import PropTypes from 'prop-types';
+        import { getLeads , deleteLead } from '../../actions/leads';
+        
+        class Leads extends Component {
+        
+          static propTypes = {
+            leads: PropTypes.array.isRequired,
+            getLeads: PropTypes.func.isRequired,
+            deleteLead: PropTypes.func.isRequired
+          };
+        
+          componentDidMount() {
+            this.props.getLeads();
+          }
+        
+          render() {
+            return (
+              <div>
+              <Fragment>
+                <h2>Leads</h2>
+        
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Message</th>
+                      <th>Gender</th>
+                      <th>Image</th>
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.props.leads.map((lead) => (
+                      <tr key={lead.id}>
+                        <td>{lead.id}</td>
+                        <td>{lead.name}</td>
+                        <td>{lead.email}</td>
+                        <td>{lead.message}</td>
+                        <td>{lead.gender}</td>
+                        <td>
+                          {/* Render the image using the <img> element */}
+                          <img src={lead.image} style={{ width: '50px', height: 'auto' }} alt={`Image for ${lead.name}`} />
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => this.props.deleteLead(lead.id)}
+                            className="btn btn-danger btn-sm"
+                          >
+                            {' '}
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Fragment>
+        
+              </div>
+            );
+          }
+        }
+        
+        const mapStateToProps = (state) => ({
+          leads: state.leads.leads,
+        });
+        
+        export default connect(mapStateToProps, { getLeads, deleteLead })(Leads);
+        
+        // The mapstatetoprops bring us the exisiting data (leads already stored)
+
+   
+11.     
 # Authentication in Django
 
 ### pipenv install django-rest-knox
