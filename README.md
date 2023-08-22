@@ -836,7 +836,114 @@ Your App.js file should look like this.
 
    
 11.     
-# Authentication in Django
+# Error Handling in React_django.
+If we start submitting the form without an email or re submit a form with already existing email we will not get an error but a bad request. so we need to create an error handler in our reducers. Instead of using toools like bootstrap alert we will use a thrd party app react-alert.
+use cmd.
+
+    npm i react-alert react-alert-template-basic react-transition-group
+    
+##    1. Update the app.js file (src)
+Update the src.js file as:
+
+    import React, { Component, Fragment } from 'react';
+    import { createRoot } from 'react-dom/client';
+    
+    import { Provider } from 'react-redux';
+    import store from '../store';
+    
+    import { Provider as AlertProvider } from 'react-alert';
+    import AlertTemplate from 'react-alert-template-basic';
+    
+    import Header from './layout/Header';
+    import Dashboard from './leads/Dashboard';
+    
+    // Alert Options
+    const alertOptions = {
+        timeout: 3000,        //adding the time duration.
+        position: 'top center',    //where the alert msgg will pop up.
+    };
+    
+    class App extends Component {
+        render() {
+            return (
+                <Provider store = {store}>
+                <AlertProvider template={AlertTemplate} 
+                {...alertOptions}> //adding alert provider
+                <Fragment>
+                    <Header/>
+                    <div className='container'>
+                        <Dashboard />
+                    </div>
+                </Fragment> 
+                </AlertProvider>
+                </Provider>
+            );
+        }
+    }
+    
+    const root = document.getElementById('app');
+    if (root) {
+        const reactRoot = createRoot(root);
+        reactRoot.render(<App />);
+    }
+By adding alert lib in app.js u can use it annywhere in frontend folders. We will make a component for our alerts implementation.
+
+    src->layout->Alerts.js file (focus on the commented code)
+    import React, { Component, Fragment } from 'react';
+    import { withAlert } from 'react-alert';
+    import { connect } from 'react-redux';
+    import PropTypes from 'prop-types';
+    
+    export class Alerts extends Component {
+      // static propTypes = {
+      //   error: PropTypes.object.isRequired,
+      //   message: PropTypes.object.isRequired,
+      // };
+    
+      // componentDidUpdate(prevProps) {
+      //   const { error, alert, message } = this.props;
+      //   if (error !== prevProps.error) {
+      //     if (error.msg.name) alert.error(`Name: ${error.msg.name.join()}`);
+      //     if (error.msg.email) alert.error(`Email: ${error.msg.email.join()}`);
+      //     if (error.msg.message) alert.error(`Message: ${error.msg.message.join()}`);
+      //     if (error.msg.non_field_errors) alert.error(error.msg.non_field_errors.join());
+      //     if (error.msg.username) alert.error(error.msg.username.join());
+      //   }
+    
+      //   if (message !== prevProps.message) {
+      //     if (message.deleteLead) alert.success(message.deleteLead);
+      //     if (message.addLead) alert.success(message.addLead);
+      //     if (message.passwordNotMatch) alert.error(message.passwordNotMatch);
+      //   }
+      // }
+      componentDidMount(){
+        this.props.alert.show('It works')
+      }
+    
+      render() {
+        return <Fragment />;
+      }
+    }
+    
+    const mapStateToProps = (state) => ({
+      error: state.errors,
+      message: state.messages,
+    });
+    
+    export default connect(mapStateToProps)(withAlert()(Alerts));
+
+As soon as a component mounts this alert in the component is 
+Add this component in the other compenents to check wether the alert is shown or not in the main app.js file.
+
+    import Alert from './layout/Alerts';
+    Update the app.js file and add <Alert /> before the container class.
+
+        <Fragment>
+            <Alert/>    
+                <Header/>
+                <div className='container'>
+                    <Dashboard />
+                    
 
 ### pipenv install django-rest-knox
 
