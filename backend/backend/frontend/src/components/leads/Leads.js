@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 import { getLeads , deleteLead } from '../../actions/leads';
 
 class Leads extends Component {
+
   static propTypes = {
     leads: PropTypes.array.isRequired,
     getLeads: PropTypes.func.isRequired,
+    deleteLead: PropTypes.func.isRequired
   };
 
   componentDidMount() {
@@ -41,7 +43,7 @@ class Leads extends Component {
                 <td>{lead.gender}</td>
                 <td>
                   {/* Render the image using the <img> element */}
-                  <img src={lead.image} alt={`Image for ${lead.name}`} />
+                  <img src={lead.image} style={{ width: '50px', height: 'auto' }} alt={`Image for ${lead.name}`} />
                 </td>
                 <td>
                   <button
@@ -68,3 +70,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, { getLeads, deleteLead })(Leads);
+
+// The mapstatetoprops bring us the exisiting data (leads already stored)

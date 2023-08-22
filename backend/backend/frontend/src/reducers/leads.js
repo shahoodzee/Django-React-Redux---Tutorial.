@@ -22,7 +22,7 @@ export default function (state = initialState, action) { //                     
       case ADD_LEAD:
         return {
           ...state,
-          leads: [...state.leads, action.payload],
+          leads: [...state.leads, action.payload], //This code means any leads that are already present we gotta add a new payload along which is a new lead.
         };
         
       case CLEAR_LEADS:
