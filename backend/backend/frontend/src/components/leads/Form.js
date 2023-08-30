@@ -30,7 +30,6 @@ class Form extends Component {
   
 
   onSubmit = (e) => {
-    
     e.preventDefault();
     const { name, email, message, gender, image } = this.state;
     const lead = { name, email, message, gender, image };
@@ -43,8 +42,6 @@ class Form extends Component {
       gender: '',
       image: null,
     });
-
-    alert('Form submitted.');
 
   };
 
@@ -65,7 +62,6 @@ class Form extends Component {
               name="name"
               onChange={this.onChange}
               value={name}
-              required
             />
           </div>
           <div className="form-group">
@@ -76,7 +72,6 @@ class Form extends Component {
               name="email"
               onChange={this.onChange}
               value={email}
-              required
             />
           </div>
           <div className="form-group">
@@ -87,7 +82,6 @@ class Form extends Component {
               name="message"
               onChange={this.onChange}
               value={message}
-              required
             />
           </div>
 
@@ -98,7 +92,6 @@ class Form extends Component {
               name="gender"
               onChange={this.onChange}
               value={gender}
-              required
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>

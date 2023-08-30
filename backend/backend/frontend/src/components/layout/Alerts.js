@@ -4,12 +4,18 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 export class Alerts extends Component {
-  // static propTypes = {
-  //   error: PropTypes.object.isRequired,
-  //   message: PropTypes.object.isRequired,
-  // };
+  static propTypes = {
+    error: PropTypes.object.isRequired,
+    // message: PropTypes.object.isRequired,
+  };
 
-  // componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
+    const {error,alert} = this.props;
+    if (error !== prevProps.error) {
+      alert.error("There is an error");      
+      
+    }
+
   //   const { error, alert, message } = this.props;
   //   if (error !== prevProps.error) {
   //     if (error.msg.name) alert.error(`Name: ${error.msg.name.join()}`);
@@ -24,7 +30,8 @@ export class Alerts extends Component {
   //     if (message.addLead) alert.success(message.addLead);
   //     if (message.passwordNotMatch) alert.error(message.passwordNotMatch);
   //   }
-  // }
+  }
+
   componentDidMount(){
     this.props.alert.show('It works')
   }
@@ -34,9 +41,8 @@ export class Alerts extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  error: state.errors,
-  message: state.messages,
-});
-
-export default connect(mapStateToProps)(withAlert()(Alerts));
+// const mapStateToProps = (state) => ({
+//   error: state.errors,
+//   message: state.messages,
+// });
+export default connect(mapStateToProps)(withAlert()(Alerts)); //update
