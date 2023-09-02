@@ -119,6 +119,7 @@ Goto http://127.0.0.1:8000/admin and see the magic
 ## Serialziers
 Now inorder to make API's we need to install Serializers from Django Rest Framework and 
 we also need Django Cors headers in order to whitelist port 3000 for React frontend
+https://www.codespeedy.com/how-to-enable-cors-headers-in-django/
 ##Attention!
 ### Since we are creating the react app inside the Django admin so we donot need a cors header
 ### pipenv install djangorestframework django-cors-headers
